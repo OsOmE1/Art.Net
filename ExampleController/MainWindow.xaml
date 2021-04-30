@@ -1,0 +1,22 @@
+﻿<Window x:Class="ExampleController.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExampleController"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Slider x:Name="Red" HorizontalAlignment="Left" Margin="119,42,0,0" VerticalAlignment="Top" Width="227" Maximum="255" Minimum="0" ValueChanged="Red_ValueChanged"/>
+        <Label Content="Red" HorizontalAlignment="Left" Margin="26,38,0,0" VerticalAlignment="Top"/>
+
+        <Slider x:Name="Green" HorizontalAlignment="Left" Margin="119,65,0,0" VerticalAlignment="Top" Width="227" Maximum="255" Minimum="0" ValueChanged="Green_ValueChanged"/>
+        <Label Content="Green" HorizontalAlignment="Left" Margin="26,61,0,0" VerticalAlignment="Top"/>
+
+        <Slider x:Name="Blue" HorizontalAlignment="Left" Margin="119,88,0,0" VerticalAlignment="Top" Width="227" Maximum="255" Minimum="0" ValueChanged="Blue_ValueChanged"/>
+        <Label Content="Blue" HorizontalAlignment="Left" Margin="26,84,0,0" VerticalAlignment="Top"/>
+
+        <Slider x:Name="White" HorizontalAlignment="Left" Margin="119,111,0,0" VerticalAlignment="Top" Width="227" Maximum="255" Minimum="0" ValueChanged="White_ValueChanged"/>
+        <Label Content="White" HorizontalAlignment="Left" Margin="26,107,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
