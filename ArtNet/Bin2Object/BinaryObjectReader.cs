@@ -312,7 +312,43 @@ namespace NoisyCowStudios.Bin2Object
                 {
                     i.SetValue(t, ReadPrimitive(i.FieldType));
                 }
+                else if (i.FieldType.IsEnum)
+                {
+                    Type underlyingType = Enum.GetUnderlyingType(i.FieldType);
 
+                    if (underlyingType == typeof(long))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(long))));
+                    }
+                    else if (underlyingType == typeof(ulong))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(ulong))));
+                    }
+                    else if (underlyingType == typeof(int))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(int))));
+                    }
+                    else if (underlyingType == typeof(uint))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(uint))));
+                    }
+                    else if (underlyingType == typeof(short))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(short))));
+                    }
+                    else if (underlyingType == typeof(byte))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(byte))));
+                    }
+                    else if (underlyingType == typeof(sbyte))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(sbyte))));
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Unsupported primitive type specified: " + type.FullName);
+                    }
+                }
                 // Object
                 else
                 {

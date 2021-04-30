@@ -183,7 +183,7 @@ namespace ArtNet.Packets
         /// The Style code defines the equipment style of the device.
         /// See <see cref="StyleCodes"/> for current Style codes.
         /// </summary>
-        public byte Style;
+        public StyleCodes Style;
         /// <summary>
         /// MAC Address. 
         /// Set to zero if node cannot supply this information.
@@ -277,7 +277,8 @@ namespace ArtNet.Packets
                 $"Mac: {sb}\n" +
                 $"ShortName: {ShortName}\n" +
                 $"LongName: {LongName}\n" +
-                $"NodeReport {NodeReport}\n";
+                $"NodeReport {NodeReport}\n" +
+                $"StyleCode: {Enum.GetName(Style)}";
         }
     }
 }

@@ -75,5 +75,54 @@ namespace Example
             };
             Console.ReadLine();
         }
+
+        static void Test()
+        {
+            var data = new ArtNetData();
+            var pollReply = new ArtPollReply
+            {
+                IP = IPAddress.Parse("192.168.178.39").GetAddressBytes(),
+                Port = 0x19,
+                Mac = NetworkInterface.GetAllNetworkInterfaces()
+                            .Where(nic => nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                            .Select(nic => nic.GetPhysicalAddress().GetAddressBytes())
+                            .FirstOrDefault(),
+
+                GoodInput = new byte[] { 0x08, 0x08, 0x08, 0x08 },
+                GoodOutput = new byte[] { 0x80, 0x80, 0x80, 0x80 },
+                PortTypes = new byte[] { 0xc0, 0xc0, 0xc0, 0xc0 },
+                ShortName = "Art.Net\0",
+                LongName = "A C# Art-Net 4 Library\0",
+
+                EstaManHi = 0,
+                EstaManLo = 0,
+                VersInfoH = 6,
+                VersInfoL = 9,
+                SubSwitch = 0,
+                OemHi = 0,
+                Oem = 0xFF,
+                UbeaVersion = 0,
+                Status1 = 0xd2,
+                SwVideo = 0,
+                SwMacro = 0,
+                SwRemote = 0,
+                Style = StyleCodes.StNode,
+                NumPortsHi = 0,
+                NumPortsLo = 4,
+                Status2 = 0x08,
+                BindIp = IPAddress.Parse("192.168.178.39").GetAddressBytes(),
+                SwIn = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                SwOut = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                GoodOutput2 = new byte[] { 0x80, 0x80, 0x80, 0x80 },
+
+                NodeReport = "Up and running\0",
+                Filler = new byte[168]
+            };
+            Console.WriteLine(pollReply.ToString());
+            data.Buffer = pollReply.ToArray();
+
+            var altPacket = ArtPollReply.FromData(data);
+            Console.WriteLine(altPacket.ToString());
+        }
     }
 }

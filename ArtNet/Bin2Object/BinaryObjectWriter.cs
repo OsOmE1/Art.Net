@@ -306,7 +306,44 @@ namespace NoisyCowStudios.Bin2Object
                         }
                     }
                 }
+                else if (i.FieldType.IsEnum)
+                {
+                    Type underlyingType = Enum.GetUnderlyingType(i.FieldType);
+                    var o = i.GetValue(obj);
 
+                    if (underlyingType == typeof(long))
+                    {
+                        Write((long)o);
+                    }
+                    else if (underlyingType == typeof(ulong))
+                    {
+                        Write((ulong)o);
+                    }
+                    else if (underlyingType == typeof(int))
+                    {
+                        Write((int)o);
+                    }
+                    else if (underlyingType == typeof(uint))
+                    {
+                        Write((uint)o);
+                    }
+                    else if (underlyingType == typeof(short))
+                    {
+                        Write((short)o);
+                    }
+                    else if (underlyingType == typeof(byte))
+                    {
+                        Write((byte)o);
+                    }
+                    else if (underlyingType == typeof(sbyte))
+                    {
+                        Write((sbyte)o);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Unsupported primitive type specified: " + type.FullName);
+                    }
+                }
                 // Object
                 else
                 {
