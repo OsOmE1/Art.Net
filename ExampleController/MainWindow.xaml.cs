@@ -48,7 +48,7 @@ namespace ExampleController
             dmxPacket.Data[2] = Color.B;
             dmxPacket.Data[3] = Color.W;
 
-            socket.SendToIp(dmxPacket, new IPEndPoint(IPAddress.Parse("192.168.178.31"), 6454));
+            socket.Send(dmxPacket);
         }
 
         private void Red_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

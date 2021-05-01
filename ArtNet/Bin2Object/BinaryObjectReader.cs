@@ -336,6 +336,10 @@ namespace NoisyCowStudios.Bin2Object
                     {
                         i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(short))));
                     }
+                    else if (underlyingType == typeof(ushort))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(ushort))));
+                    }
                     else if (underlyingType == typeof(byte))
                     {
                         i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(byte))));

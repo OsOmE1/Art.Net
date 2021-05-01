@@ -94,10 +94,11 @@ namespace ArtNet.Packets
         /// <summary>
         /// The array is a textual report of the Node’s operating status or operational errors.
         /// It is primarily intended for "engineering" data rather than "end user" data.
-        /// The field isformatted as: "#xxxx [yyyy...] zzzzz..." xxxx is a hex status code as defined in <see cref="NodeReport"/>. 
+        /// The field is formatted as: "#xxxx [yyyy...] zzzzz..." xxxx is a hex status code as defined in <see cref="NodeReport"/>. 
         /// yyyy is a decimal counter that increments every time the Node sends an ArtPollResponse. 
         /// This allows the controller to monitor event changes in the Node. 
-        /// zzzz is an English text string defining the status. This is a fixed length field, although the string it contains can be shorter than the field.
+        /// zzzz is an English text string defining the status. 
+        /// This is a fixed length field, although the string it contains can be shorter than the field.
         /// </summary>
         [String(FixedSize = 64)]
         public string NodeReport;
@@ -237,8 +238,6 @@ namespace ArtNet.Packets
         {
             using var stream = new MemoryStream();
             using var writer = new BinaryObjectWriter(stream, Endianness.Little);
-            writer.Write(ID);
-            writer.Write((short)OpCode);
 
             writer.WriteObject(this);
 
@@ -248,10 +247,7 @@ namespace ArtNet.Packets
         public static new ArtPollReply FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little)
-            {
-                Position = 10,
-            };
+            var reader = new BinaryObjectReader(stream, Endianness.Little);
 
             ArtPollReply packet = reader.ReadObject<ArtPollReply>();
             packet.PacketData = data;

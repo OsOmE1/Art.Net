@@ -331,6 +331,10 @@ namespace NoisyCowStudios.Bin2Object
                     {
                         Write((short)o);
                     }
+                    else if (underlyingType == typeof(ushort))
+                    {
+                        Write((ushort)o);
+                    }
                     else if (underlyingType == typeof(byte))
                     {
                         Write((byte)o);
