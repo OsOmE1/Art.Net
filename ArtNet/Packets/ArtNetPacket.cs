@@ -17,13 +17,14 @@ namespace ArtNet.Packets
         /// <value>
         ///  ["A", "r", "t", "-", "N", "e", "t", 0x00]
         /// </value>
-        [ArrayLength(FixedSize = 8)]
+        [SkipWhenReading]
         public byte[] ID;
         /// <summary>
         /// The OpCode defines the class of data following ArtPoll within this UDP packet. 
         /// Transmitted low byte first. 
         /// <para>See <see cref="OpCodes">OpCodes</see>. Set to OpPoll.</para>
         /// </summary>
+        [SkipWhenReading]
         public OpCodes OpCode;
 
 
@@ -32,22 +33,23 @@ namespace ArtNet.Packets
         /// </summary>
         public ArtNetPacket(OpCodes opCode)
         {
-            ID = new byte[] { 65, 114, 116, 45, 78, 101, 116, 0 }; // "Art-Net" as null terminated byte array
+            ID = new byte[] { 65, 114, 116, 45, 78, 101, 116, 0, }; // "Art-Net" as null terminated byte array
             OpCode = opCode;
         }
 
-        public ArtNetPacket()
-        {
-
-        }
 
         public static ArtNetPacket FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little);
+            var reader = new BinaryObjectReader(stream);
 
-            ArtNetPacket packet = reader.ReadObject<ArtNetPacket>();
+            byte[] id = reader.ReadBytes(8);
+            OpCodes code = (OpCodes)reader.ReadInt16();
+
+            ArtNetPacket packet = new(code);
+            packet.ID = id;
             packet.PacketData = data;
+
             return packet;
         }
 
@@ -58,11 +60,10 @@ namespace ArtNet.Packets
         /// <returns>A byte array containing all <see cref="ArtNetPacket"/> data</returns>
         public virtual byte[] ToArray()
         {
-            using var stream = new MemoryStream();
-            using var writer = new BinaryObjectWriter(stream, Endianness.Little);
-
-            writer.WriteObject(this);
-
+            var stream = new MemoryStream();
+            var writer = new BinaryWriter(stream);
+            writer.Write(ID);
+            writer.Write((short)OpCode);
             return stream.ToArray();
         }
 

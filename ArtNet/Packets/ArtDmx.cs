@@ -82,7 +82,11 @@ namespace ArtNet.Packets
         public static new ArtDmx FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little);
+            var reader = new BinaryObjectReader(stream, Endianness.Little)
+            {
+                Position = 10
+            };
+
             ArtDmx packet = reader.ReadObject<ArtDmx>();
 
             packet.PacketData = data;
@@ -94,6 +98,8 @@ namespace ArtNet.Packets
         {
             var stream = new MemoryStream();
             var writer = new BinaryObjectWriter(stream);
+            writer.Write(ID);
+            writer.Write((short)OpCode);
 
             writer.WriteObject(this);
             return stream.ToArray();

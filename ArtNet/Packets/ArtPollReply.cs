@@ -238,6 +238,8 @@ namespace ArtNet.Packets
         {
             using var stream = new MemoryStream();
             using var writer = new BinaryObjectWriter(stream, Endianness.Little);
+            writer.Write(ID);
+            writer.Write((short)OpCode);
 
             writer.WriteObject(this);
 
@@ -247,7 +249,10 @@ namespace ArtNet.Packets
         public static new ArtPollReply FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little);
+            var reader = new BinaryObjectReader(stream, Endianness.Little)
+            {
+                Position = 10,
+            };
 
             ArtPollReply packet = reader.ReadObject<ArtPollReply>();
             packet.PacketData = data;
