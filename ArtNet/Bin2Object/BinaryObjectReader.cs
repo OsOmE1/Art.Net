@@ -336,6 +336,10 @@ namespace NoisyCowStudios.Bin2Object
                     {
                         i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(short))));
                     }
+                    else if (underlyingType == typeof(ushort))
+                    {
+                        i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(ushort))));
+                    }
                     else if (underlyingType == typeof(byte))
                     {
                         i.SetValue(t, Enum.ToObject(i.FieldType, ReadPrimitive(typeof(byte))));
@@ -426,7 +430,7 @@ namespace NoisyCowStudios.Bin2Object
 
         public string ReadNullTerminatedString(Encoding encoding = null)
         {
-            List<byte> bytes = new List<byte>();
+            List<byte> bytes = new();
             byte b;
             while ((b = ReadByte()) != 0)
                 bytes.Add(b);
@@ -445,7 +449,7 @@ namespace NoisyCowStudios.Bin2Object
         public string ReadFixedLengthString(int length, Encoding encoding = null)
         {
             byte[] b = ReadArray<byte>(length);
-            List<byte> bytes = new List<byte>();
+            List<byte> bytes = new();
             foreach (var c in b)
                 if (c == 0)
                     break;

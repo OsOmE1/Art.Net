@@ -40,7 +40,6 @@ namespace ArtNet.Packets
         /// <summary>
         /// The length of the DMX512 data array. This value should be an even number in the range 2 – 512. 
         /// It represents the number of DMX512 channels encoded in packet.NB: Products which convert Art-Net to DMX512 may opt to always send 512 channels. 
-        /// Low Byte of above.
         /// </summary>
         public byte LengthHi;
         /// <summary>
@@ -82,7 +81,7 @@ namespace ArtNet.Packets
         public static new ArtDmx FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little)
+            var reader = new BinaryObjectReader(stream)
             {
                 Position = 10
             };

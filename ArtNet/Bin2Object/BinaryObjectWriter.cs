@@ -239,7 +239,7 @@ namespace NoisyCowStudios.Bin2Object
                     var attr = i.GetCustomAttribute<ArrayLengthAttribute>(false) ??
                         throw new InvalidOperationException("Array field " + i.Name + " must have ArrayLength attribute");
 
-                    int lengthPrimitive;
+                    int lengthPrimitive = 0;
 
                     if (attr.FieldName != null)
                     {
@@ -257,6 +257,11 @@ namespace NoisyCowStudios.Bin2Object
                     }
 
                     var arr = i.GetValue(obj);
+                    if (arr == null && lengthPrimitive != 0)
+                    {
+                        arr = Array.CreateInstance(i.FieldType.GetElementType(), lengthPrimitive);
+                    }
+
                     var us = GetType().GetMethods().Where(m => m.Name == "WriteArray" && m.GetParameters().Length == 1 && m.IsGenericMethodDefinition).Single();
                     var mi2 = us.MakeGenericMethod(i.FieldType.GetElementType());
                     mi2.Invoke(this, new object[] { arr });
@@ -330,6 +335,10 @@ namespace NoisyCowStudios.Bin2Object
                     else if (underlyingType == typeof(short))
                     {
                         Write((short)o);
+                    }
+                    else if (underlyingType == typeof(ushort))
+                    {
+                        Write((ushort)o);
                     }
                     else if (underlyingType == typeof(byte))
                     {

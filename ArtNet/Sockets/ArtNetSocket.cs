@@ -31,6 +31,7 @@ namespace ArtNet.Sockets
             SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
             open = true;
 
+
             ReceiveArtNet();
         }
 
@@ -97,9 +98,9 @@ namespace ArtNet.Sockets
             SendTo(packet.ToArray(), new IPEndPoint(GetBroadcastAddress(), Port));
         }
 
-        public void SendToIp(ArtNetPacket packet, IPEndPoint ipEndPoint)
+        public void SendToIp(ArtNetPacket packet, IPAddress ip)
         {
-            SendTo(packet.ToArray(), ipEndPoint);
+            SendTo(packet.ToArray(), new IPEndPoint(ip, Port));
         }
 
         /// <summary>
