@@ -1,16 +1,20 @@
 ﻿using ArtNet.Packets;
 using ArtNet.Sockets;
+using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ExampleController
 {
     public struct RGBW
     {
-        public byte R;
-        public byte G;
-        public byte B;
-        public byte W;
+        public int R;
+        public int G;
+        public int B;
+        public int W;
     }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -19,6 +23,7 @@ namespace ExampleController
     {
         public RGBW Color;
         public ArtNetSocket socket;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,29 +32,36 @@ namespace ExampleController
             socket.Begin(IPAddress.Parse("192.168.178.39"), IPAddress.Parse("255.255.255.0"));
         }
 
+
         public void OnChange()
         {
-            var dmxPacket = new ArtDmx
+            for (int i = 0; i < 8; i++)
             {
-                ProtVerHi = 6,
-                ProtVerLo = 9,
-                Sequence = 0x00,
-                Physical = 0,
-                SubUni = 0,
-                Net = 0,
-                LengthHi = 0,
-                LengthLo = 0,
-                Data = new byte[512]
-            };
-            dmxPacket.Length = 512;
-            dmxPacket.Universe = 1;
-            dmxPacket.Data[0] = Color.R;
-            dmxPacket.Data[1] = Color.G;
-            dmxPacket.Data[2] = Color.B;
-            dmxPacket.Data[3] = Color.W;
-
-            socket.SendToIp(dmxPacket, new IPEndPoint(IPAddress.Parse("192.168.178.31"), 6454));
+                var dmxPacket = new ArtDmx
+                {
+                    ProtVerHi = 6,
+                    ProtVerLo = 9,
+                    Sequence = 0x00,
+                    Physical = 0,
+                    SubUni = 0,
+                    Net = 0,
+                    LengthHi = 0,
+                    LengthLo = 0,
+                    Data = new byte[512]
+                };
+                dmxPacket.Length = 512;
+                dmxPacket.Universe = i;
+                for (int j = 0; j < 58; j++)
+                {
+                    dmxPacket.Data[j * 4] = (byte)Color.R;
+                    dmxPacket.Data[j * 4 + 1] = (byte)Color.G;
+                    dmxPacket.Data[j * 4 + 2] = (byte)Color.B;
+                    dmxPacket.Data[j * 4 + 3] = (byte)Color.W;
+                }
+                socket.Send(dmxPacket);
+            }
         }
+
 
         private void Red_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {

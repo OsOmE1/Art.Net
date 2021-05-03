@@ -57,7 +57,7 @@ namespace ArtNet.Packets
         public static new ArtPoll FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little)
+            var reader = new BinaryObjectReader(stream)
             {
                 Position = 10,
             };

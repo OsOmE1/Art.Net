@@ -54,7 +54,7 @@ namespace ArtNet.Packets
         /// Bit 15 high indicates extended features available.
         /// Current registered codes are defined in 'Art-NetOemCodes.h' from the DMX-Workshop SDK.
         /// </summary>
-        public byte Oem;
+        public byte OemLo;
         /// <summary>
         /// This field contains the firmware version of the User Bios Extension Area(UBEA). 
         /// If the UBEA is not programmed, this field contains zero.
@@ -171,15 +171,8 @@ namespace ArtNet.Packets
         /// <summary>
         /// Not used set to zero
         /// </summary>
-        public byte Spare1;
-        /// <summary>
-        /// Not used set to zero
-        /// </summary>
-        public byte Spare2;
-        /// <summary>
-        /// Not used set to zero
-        /// </summary>
-        public byte Spare3;
+        [ArrayLength(FixedSize = 3)]
+        public byte[] Spare;
         /// <summary>
         /// The Style code defines the equipment style of the device.
         /// See <see cref="StyleCodes"/> for current Style codes.
@@ -222,6 +215,16 @@ namespace ArtNet.Packets
         [ArrayLength(FixedSize = 168)]
         public byte[] Filler;
 
+        public int Oem
+        {
+            get => OemLo | OemHi << 8;
+            set
+            {
+                OemLo = (byte)(value & 0xFF);
+                OemHi = (byte)(value >> 8);
+            }
+        }
+
         /// <summary>
         /// Initialize ArtPollReply
         /// </summary>
@@ -237,7 +240,7 @@ namespace ArtNet.Packets
         public override byte[] ToArray()
         {
             using var stream = new MemoryStream();
-            using var writer = new BinaryObjectWriter(stream, Endianness.Little);
+            using var writer = new BinaryObjectWriter(stream);
             writer.Write(ID);
             writer.Write((short)OpCode);
 
@@ -249,7 +252,7 @@ namespace ArtNet.Packets
         public static new ArtPollReply FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
-            var reader = new BinaryObjectReader(stream, Endianness.Little)
+            var reader = new BinaryObjectReader(stream)
             {
                 Position = 10,
             };
@@ -279,7 +282,8 @@ namespace ArtNet.Packets
                 $"ShortName: {ShortName}\n" +
                 $"LongName: {LongName}\n" +
                 $"NodeReport {NodeReport}\n" +
-                $"StyleCode: {Enum.GetName(Style)}";
+                $"StyleCode: {Enum.GetName(Style)}\n" +
+                $"EstaManHi: {EstaManHi}";
         }
     }
 }

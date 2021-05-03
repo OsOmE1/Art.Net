@@ -13,6 +13,8 @@ namespace Example
     {
         static void Main(string[] args)
         {
+            Test();
+            return;
             var artnet = new ArtNet.Sockets.ArtNetSocket
             {
                 EnableBroadcast = true
@@ -50,10 +52,9 @@ namespace Example
                         VersInfoL = 9,
                         SubSwitch = 0,
                         OemHi = 0,
-                        Oem = 0xFF,
+                        OemLo = 0,
                         UbeaVersion = 0,
                         Status1 = 0xd2,
-                        SwVideo = 0,
                         SwMacro = 0,
                         SwRemote = 0,
                         Style = (byte)StyleCodes.StNode,
@@ -68,11 +69,27 @@ namespace Example
                         NodeReport = "Up and running\0",
                         Filler = new byte[168]
                     };
+                    pollReply.Oem = 0xFFFF;
+
                     artnet.Send(pollReply);
                     Console.WriteLine(pollReply.ToString());
                 }
 
             };
+            var todRequest = new ArtTodRequest
+            {
+                ProtVerHi = 0,
+                ProtVerLo = 0,
+                Filler = 0,
+                Spare = new byte[7],
+                Net = 0x00,
+                Command = 0x00,
+                Address = new byte[32],
+            };
+
+            todRequest.ProtVer = 14;
+            artnet.Send(todRequest);
+
             Console.ReadLine();
         }
 
@@ -93,8 +110,6 @@ namespace Example
                 PortTypes = new byte[] { 0xc0, 0xc0, 0xc0, 0xc0 },
                 ShortName = "Art.Net\0",
                 LongName = "A C# Art-Net 4 Library\0",
-
-                EstaManHi = 0,
                 EstaManLo = 0,
                 VersInfoH = 6,
                 VersInfoL = 9,
@@ -103,7 +118,6 @@ namespace Example
                 Oem = 0xFF,
                 UbeaVersion = 0,
                 Status1 = 0xd2,
-                SwVideo = 0,
                 SwMacro = 0,
                 SwRemote = 0,
                 Style = StyleCodes.StNode,
