@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
@@ -7,8 +6,8 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpDmx)]
-    public class ArtDmx : ArtNetPacket
+    [OpCode(OpCode = OpCodes.OpNzs)]
+    public class ArtNzs : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -21,18 +20,17 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
-        /// The sequence number is used to ensure that ArtDmx packets are used in the correct order. 
-        /// When Art-Net is carried over a medium such as the Internet, it is possible that ArtDmx packets will reach the receiver out of order. 
+        /// The sequence number is used to ensure that ArtNzs packets are used in the correct order. 
+        /// When Art-Net is carried over a medium such as the Internet, it is possible that ArtNzs packets will reach the receiver out of order. 
         /// This field is incremented in the range 0x01 to 0xff to allow the receiving node to resequence packets.
         /// The Sequence field is set to 0x00 to disable this feature
         /// </summary>
         public byte Sequence;
         /// <summary>
-        /// The physical input port from which DMX512 data was input. 
-        /// This field is for information only.
-        /// Use Universe for data routing.
+        /// The DMX512 start code of this packet.
+        /// Must not be Zero or RDM.
         /// </summary>
-        public byte Physical;
+        public byte StartCode;
         /// <summary>
         /// The low byte of the 15 bit Port-Address to which this packet is destined.
         /// </summary>
@@ -67,22 +65,12 @@ namespace ArtNet.Packets
             }
         }
 
-        public int Universe
-        {
-            get => SubUni | Net << 8;
-            set
-            {
-                SubUni = (byte)(value & 0xFF);
-                Net = (byte)(value >> 8);
-            }
-        }
-
-        public ArtDmx() : base(OpCodes.OpDmx)
+        public ArtNzs() : base(OpCodes.OpNzs)
         {
 
         }
 
-        public static new ArtDmx FromData(ArtNetData data)
+        public static new ArtNzs FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -90,7 +78,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtDmx packet = reader.ReadObject<ArtDmx>();
+            ArtNzs packet = reader.ReadObject<ArtNzs>();
 
             packet.PacketData = data;
 
@@ -111,7 +99,6 @@ namespace ArtNet.Packets
         public override string ToString()
         {
             return base.ToString() +
-                $"Universe: {Universe}\n" +
                 $"Data Length: {Length}\n";
         }
     }

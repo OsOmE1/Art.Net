@@ -30,6 +30,6 @@
         /// Messages of this type are displayed on a single line in the DMX-Workshop diagnostics display. 
         /// All other types are displayed in a list box.
         /// </summary>
-        DpVolatile = 0xf0,
+        DpVolatile = 0xf0
     }
 }

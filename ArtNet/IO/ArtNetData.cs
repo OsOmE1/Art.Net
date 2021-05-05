@@ -4,11 +4,11 @@ namespace ArtNet.IO
 {
     public class ArtNetData
     {
-        [SkipWhenReading]
+        [SkipBin2Object]
         public byte[] Buffer = new byte[1500];
-        [SkipWhenReading]
+        [SkipBin2Object]
         public int BufferSize = 1500;
-        [SkipWhenReading]
+        [SkipBin2Object]
         public int DataLength = 0;
 
         public bool Valid

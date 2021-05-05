@@ -1,15 +1,18 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using NoisyCowStudios.Bin2Object;
 
-
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpIpProgReply)]
-    public class ArtIpProgReply : ArtNetPacket
+    /// <summary>
+    /// The ArtSync packet can be used to force nodes to synchronously output ArtDmx packets to their outputs.
+    /// This is useful in video and media-wall applications.
+    /// A controller that wishes to implement synchronous transmission will unicast multiple universes of ArtDmx and then broadcast an ArtSync to synchronously transfer all the ArtDmx packets to the nodes’ outputs at the same time.
+    /// </summary>
+    [OpCode(OpCode = OpCodes.OpSync)]
+    public class ArtSync : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -22,39 +25,17 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
-        /// Pad length to match ArtPoll.
+        /// Transmit as zero
         /// </summary>
-        [ArrayLength(FixedSize = 4)]
-        public byte[] Filler;
-        /// <summary>
-        /// IP Address of Node.
-        /// </summary>
-        [ArrayLength(FixedSize = 4)]
-        public byte[] ProgIp;
-        /// <summary>
-        /// Subnet mask of Node.
-        /// </summary>
-        [ArrayLength(FixedSize = 4)]
-        public byte[] ProgSm;
-        [Obsolete("(Deprecated)")]
-        [SkipBin2Object]
-        public byte[] ProgPort;
-        /// <remarks>
-        /// Refer to the ArtNet <see href="https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf#page=40">User Guide</see> on how to use.
-        /// </remarks>
-        public byte Status;
-        /// <summary>
-        /// Transmit as zero, receivers don’t test.
-        /// </summary>
-        [ArrayLength(FixedSize = 7)]
-        public byte[] Spare;
+        [ArrayLength(FixedSize = 2)]
+        public byte Aux;
 
-        public ArtIpProgReply() : base(OpCodes.OpIpProgReply)
+        public ArtSync() : base(OpCodes.OpSync)
         {
 
         }
 
-        public static new ArtIpProgReply FromData(ArtNetData data)
+        public static new ArtSync FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -62,7 +43,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtIpProgReply packet = reader.ReadObject<ArtIpProgReply>();
+            ArtSync packet = reader.ReadObject<ArtSync>();
 
             packet.PacketData = data;
 

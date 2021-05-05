@@ -6,8 +6,13 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpTodRequest)]
-    public class ArtTodRequest : ArtNetPacket
+    /// <summary>
+    /// ArtTimeCode allows time code to be transported over the network.
+    /// The data format is compatible with both longitudinal time code and MIDI time code.
+    /// The four key types of Film, EBU, Drop Frame and SMPTE are also encoded.
+    /// </summary>
+    [OpCode(OpCode = OpCodes.OpTimeCode)]
+    public class ArtTimeCode : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -20,51 +25,37 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
-        /// Pad length to match ArtPoll.
+        /// Ignore by receiver, set to zero by sender
         /// </summary>
-        public short Filler;
+        [ArrayLength(FixedSize = 2)]
+        public byte Filler;
         /// <summary>
-        /// Transmit as zero, receivers don’t test.
+        /// Frames time. 0 – 29 depending on mode
         /// </summary>
-        [ArrayLength(FixedSize = 7)]
-        public byte[] Spare;
+        public byte Frames;
         /// <summary>
-        /// The top 7 bits of the 15 bit Port-Address of Nodes that must respond to this packet.
+        /// Seconds. 0 - 59.
         /// </summary>
-        public byte Net;
+        public byte Seconds;
         /// <summary>
-        /// Defines the packet contents.
+        /// Minutes. 0 - 59.
         /// </summary>
-        public TodRequestCodes Command;
+        public byte Minutes;
         /// <summary>
-        /// The number of entries in Address that are used. Max value is 32.
+        /// Hours. 0 - 23.
         /// </summary>
-        public byte AddCount;
+        public byte Hours;
         /// <summary>
-        /// This array defines the low byte of the PortAddress of the Output Gateway nodes that must respond to this packet.
-        /// The high nibble is the Sub-Net switch. 
-        /// The low nibble corresponds to the Universe.
-        /// This is combined with the 'Net' field above to form the 15 bit address.
+        /// Video type <see cref="TimeCodes"/>
         /// </summary>
-        [ArrayLength(FixedSize = 32)]
-        public byte[] Address;
+        public TimeCodes Type;
 
-        public int ProtVer
-        {
-            get => ProtVerLo | ProtVerHi << 8;
-            set
-            {
-                ProtVerLo = (byte)(value & 0xFF);
-                ProtVerHi = (byte)(value >> 8);
-            }
-        }
-
-        public ArtTodRequest() : base(OpCodes.OpTodRequest)
+        public ArtTimeCode() : base(OpCodes.OpTimeCode)
         {
 
         }
 
-        public static new ArtTodRequest FromData(ArtNetData data)
+        public static new ArtTimeCode FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -72,7 +63,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtTodRequest packet = reader.ReadObject<ArtTodRequest>();
+            ArtTimeCode packet = reader.ReadObject<ArtTimeCode>();
 
             packet.PacketData = data;
 

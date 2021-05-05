@@ -1,11 +1,13 @@
-﻿using ArtNet.Rdm;
+﻿using System.IO;
+using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
+using ArtNet.Rdm;
 using NoisyCowStudios.Bin2Object;
-using System.IO;
 
 namespace ArtNet.Packets
 {
+    [OpCode(OpCode = OpCodes.OpTodData)]
     public class ArtTodData : ArtNetPacket
     {
         /// <summary>
@@ -115,11 +117,6 @@ namespace ArtNet.Packets
 
             writer.WriteObject(this);
             return stream.ToArray();
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
         }
     }
 }

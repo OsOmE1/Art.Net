@@ -2,10 +2,19 @@
 
 namespace ArtNet.Rdm
 {
+    /// <summary>
+    /// Device UId for RDM 
+    /// </summary>
     public class UId
     {
+        /// <summary>
+        /// The manufacturer id of the device
+        /// </summary>
         public ushort ManufacturerId;
 
+        /// <summary>
+        /// The id of the device
+        /// </summary>
         public uint DeviceId;
 
         public UId(ushort manufacturerId, uint deviceId)

@@ -11,6 +11,10 @@ namespace ArtNet.Packets.Codes
     public enum OpCodes : ushort
     {
         /// <summary>
+        /// This is not a packet
+        /// </summary>
+        OpNone = 0x000,
+        /// <summary>
         /// This is an ArtPoll packet. 
         /// No other data is contained in this UDP packet.
         /// </summary>
@@ -172,5 +176,9 @@ namespace ArtNet.Packets.Codes
         /// Replies to OpDirectory with file list
         /// </summary>
         OpDirectoryReply = 0x9b00,
+        /// <summary>
+        /// This is for custom ArtNetPackets that you an end user can implement themself
+        /// </summary>
+        OpCustom = 0xffff
     }
 }

@@ -6,8 +6,13 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpTodRequest)]
-    public class ArtTodRequest : ArtNetPacket
+    /// <summary>
+    /// The ArtTrigger packet is used to send trigger macros to the network.
+    /// The most common implementation involves a single controller broadcasting to all other devices.
+    /// In some circumstances a controller may only wish to trigger a single device or a small group in which case unicast would be used.
+    /// </summary>
+    [OpCode(OpCode = OpCodes.OpTrigger)]
+    public class ArtTrigger : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -20,51 +25,38 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
-        /// Pad length to match ArtPoll.
+        /// Ignore by receiver, set to zero by sender
         /// </summary>
-        public short Filler;
+        [ArrayLength(FixedSize = 2)]
+        public byte Filler;
         /// <summary>
-        /// Transmit as zero, receivers don’t test.
+        /// The manufacturer code (high byte) of nodes that shall accept this trigger.
         /// </summary>
-        [ArrayLength(FixedSize = 7)]
-        public byte[] Spare;
+        public byte OemCodeHi;
         /// <summary>
-        /// The top 7 bits of the 15 bit Port-Address of Nodes that must respond to this packet.
+        /// The manufacturer code (low byte) of nodes that shall accept this trigger
         /// </summary>
-        public byte Net;
+        public byte OemCodeLo;
         /// <summary>
-        /// Defines the packet contents.
+        /// The Trigger Key.
         /// </summary>
-        public TodRequestCodes Command;
+        public byte Key;
         /// <summary>
-        /// The number of entries in Address that are used. Max value is 32.
+        /// The Trigger SubKey.
         /// </summary>
-        public byte AddCount;
+        public byte SubKey;
         /// <summary>
-        /// This array defines the low byte of the PortAddress of the Output Gateway nodes that must respond to this packet.
-        /// The high nibble is the Sub-Net switch. 
-        /// The low nibble corresponds to the Universe.
-        /// This is combined with the 'Net' field above to form the 15 bit address.
+        /// The interpretation of the payload is defined by the Key.
         /// </summary>
-        [ArrayLength(FixedSize = 32)]
-        public byte[] Address;
+        [ArrayLength(FixedSize = 512)]
+        public byte[] Data;
 
-        public int ProtVer
-        {
-            get => ProtVerLo | ProtVerHi << 8;
-            set
-            {
-                ProtVerLo = (byte)(value & 0xFF);
-                ProtVerHi = (byte)(value >> 8);
-            }
-        }
-
-        public ArtTodRequest() : base(OpCodes.OpTodRequest)
+        public ArtTrigger() : base(OpCodes.OpTrigger)
         {
 
         }
 
-        public static new ArtTodRequest FromData(ArtNetData data)
+        public static new ArtTrigger FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -72,7 +64,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtTodRequest packet = reader.ReadObject<ArtTodRequest>();
+            ArtTrigger packet = reader.ReadObject<ArtTrigger>();
 
             packet.PacketData = data;
 

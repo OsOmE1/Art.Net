@@ -1,9 +1,9 @@
-﻿using ArtNet.Rdm;
+﻿using System;
+using System.IO;
+using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using NoisyCowStudios.Bin2Object;
-using System.IO;
-using System;
 
 namespace ArtNet.Packets
 {
@@ -13,6 +13,7 @@ namespace ArtNet.Packets
     /// This is achieved by sending an <see cref="ArtAddress"/> packet to the Node’s IP address. (The IP address is returned in the <see cref="ArtPoll"/> packet). 
     /// The node replies with an <see cref="ArtPollReply"/> packet.
     /// </summary>
+    [OpCode(OpCode = OpCodes.OpAddress)]
     public class ArtAddress : ArtNetPacket
     {
         /// <summary>
@@ -125,11 +126,6 @@ namespace ArtNet.Packets
 
             writer.WriteObject(this);
             return stream.ToArray();
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using ArtNet.IO;
-using ArtNet.Packets.Codes;
-using NoisyCowStudios.Bin2Object;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
+using static ArtNet.Attributes;
+using ArtNet.IO;
+using ArtNet.Packets.Codes;
+using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
@@ -11,6 +12,7 @@ namespace ArtNet.Packets
     /// A device, in response to a Controller’s ArtPoll, sends the ArtPollReply. 
     /// This packet is also broadcast to the Directed Broadcast address by all Art-Net devices on power up
     /// </summary>
+    [OpCode(OpCode = OpCodes.OpPollReply)]
     public class ArtPollReply : ArtNetPacket
     {
         /// <summary>
@@ -148,7 +150,7 @@ namespace ArtNet.Packets
         /// The field is now deprecated
         /// </summary>
         [Obsolete("This field is deprecated.")]
-        [SkipWhenReading]
+        [SkipBin2Object]
         public byte SwVideo;
         /// <summary>
         /// If the Node supports macro key inputs, this byte represents the trigger values. 

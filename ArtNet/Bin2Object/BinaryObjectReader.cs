@@ -23,7 +23,7 @@ namespace NoisyCowStudios.Bin2Object
         private Dictionary<Type, Dictionary<FieldInfo, List<(double Min, double Max)>>> readObjectVersionCache = new Dictionary<Type, Dictionary<FieldInfo, List<(double, double)>>>();
 
         // Thread synchronization objects (for thread safety)
-        private object readLock = new object();
+        private object readLock = new();
 
         // Initialization
         public BinaryObjectReader(Stream stream, Endianness endianness = Endianness.Little, bool leaveOpen = false) : base(stream, Encoding.Default, leaveOpen)
@@ -244,7 +244,7 @@ namespace NoisyCowStudios.Bin2Object
             {
                 var fields = new Dictionary<FieldInfo, List<(double, double)>>();
                 foreach (var i in type.GetFields())
-                    if (i.GetCustomAttribute<SkipWhenReadingAttribute>(false) is SkipWhenReadingAttribute)
+                    if (i.GetCustomAttribute<SkipBin2ObjectAttribute>(false) is SkipBin2ObjectAttribute)
                         fields.Add(i, new List<(double, double)> { (-2, -2) });
                     else
                         fields.Add(i, i.GetCustomAttributes<VersionAttribute>(false).Select(v => (v.Min, v.Max)).ToList());
@@ -288,9 +288,17 @@ namespace NoisyCowStudios.Bin2Object
 
                     if (attr.FieldName != null)
                     {
-                        var field = type.GetField(attr.FieldName) ??
-                            throw new ArgumentException("Array field " + i.Name + " has invalid FieldName in ArrayLength attribute");
-                        lengthPrimitive = Convert.ToInt32(field.GetValue(t));
+                        var field = type.GetField(attr.FieldName);
+                        if (field != null)
+                        {
+                            lengthPrimitive = Convert.ToInt32(field.GetValue(t));
+                        }
+                        else
+                        {
+                            var property = type.GetProperty(attr.FieldName) ?? 
+                                throw new ArgumentException("Array field " + i.Name + " has invalid FieldName in ArrayLength attribute");
+                            lengthPrimitive = Convert.ToInt32(property.GetValue(t));
+                        }
                     }
                     else if (attr.FixedSize > 0)
                     {

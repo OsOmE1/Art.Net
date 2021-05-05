@@ -1,8 +1,9 @@
-﻿using ArtNet.IO;
+﻿using System;
+using System.IO;
+using static ArtNet.Attributes;
+using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using NoisyCowStudios.Bin2Object;
-using System;
-using System.IO;
 
 namespace ArtNet.Packets
 {
@@ -22,6 +23,7 @@ namespace ArtNet.Packets
         public bool ReplyOnChange;
     }
 
+    [OpCode(OpCode = OpCodes.OpPoll)]
     public class ArtPoll : ArtNetPacket
     {
         /// <summary>
@@ -37,7 +39,7 @@ namespace ArtNet.Packets
         /// <summary>
         /// Set behaviour of Node
         /// </summary>
-        [SkipWhenReading]
+        [SkipBin2Object]
         public TalkToMe TalkToMe;
         /// <summary>
         /// Holds the Flags stored in TalkToMe

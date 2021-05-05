@@ -203,7 +203,7 @@ namespace NoisyCowStudios.Bin2Object
             {
                 var fields = new Dictionary<FieldInfo, List<(double, double)>>();
                 foreach (var i in type.GetFields())
-                    if (i.GetCustomAttribute<SkipWhenReadingAttribute>(false) is SkipWhenReadingAttribute)
+                    if (i.GetCustomAttribute<SkipBin2ObjectAttribute>(false) is SkipBin2ObjectAttribute)
                         fields.Add(i, new List<(double, double)> { (-2, -2) });
                     else
                         fields.Add(i, i.GetCustomAttributes<VersionAttribute>(false).Select(v => (v.Min, v.Max)).ToList());
@@ -243,9 +243,17 @@ namespace NoisyCowStudios.Bin2Object
 
                     if (attr.FieldName != null)
                     {
-                        var field = type.GetField(attr.FieldName) ??
-                            throw new ArgumentException("Array field " + i.Name + " has invalid FieldName in ArrayLength attribute");
-                        lengthPrimitive = Convert.ToInt32(field.GetValue(obj));
+                        var field = type.GetField(attr.FieldName);
+                        if (field != null)
+                        {
+                            lengthPrimitive = Convert.ToInt32(field.GetValue(obj));
+                        }
+                        else
+                        {
+                            var property = type.GetProperty(attr.FieldName) ??
+                                throw new ArgumentException("Array field " + i.Name + " has invalid FieldName in ArrayLength attribute");
+                            lengthPrimitive = Convert.ToInt32(property.GetValue(obj));
+                        }
                     }
                     else if (attr.FixedSize > 0)
                     {
@@ -410,6 +418,10 @@ namespace NoisyCowStudios.Bin2Object
 
         public void WriteFixedLengthString(string str, int size = -1, Encoding encoding = null)
         {
+            if (str.Length > size && size != -1)
+            {
+                throw new ArgumentException("String cannot be longer than fixed length");
+            }
             var bytes = encoding?.GetBytes(str) ?? Encoding.GetBytes(str);
             Write(bytes);
 

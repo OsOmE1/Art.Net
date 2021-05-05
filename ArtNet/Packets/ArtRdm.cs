@@ -6,8 +6,11 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpTodRequest)]
-    public class ArtTodRequest : ArtNetPacket
+    /// <summary>
+    /// The ArtRdm packet is used to send RDM control parameters over Art-Net.
+    /// </summary>
+    [OpCode(OpCode = OpCodes.OpRdm)]
+    public class ArtRdm : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -20,51 +23,42 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
+        /// Art-Net Devices that only support RDM DRAFT V1.0 set field to 0x00.
+        /// Devices that support RDM STANDARD V1.0 set field to 0x01.
+        /// </summary>
+        public byte RdmVer;
+        /// <summary>
         /// Pad length to match ArtPoll.
         /// </summary>
-        public short Filler;
+        public byte Filler;
         /// <summary>
         /// Transmit as zero, receivers don’t test.
         /// </summary>
         [ArrayLength(FixedSize = 7)]
         public byte[] Spare;
         /// <summary>
-        /// The top 7 bits of the 15 bit Port-Address of Nodes that must respond to this packet.
+        /// Defines the packet action.
         /// </summary>
-        public byte Net;
+        public RdmCodes Command;
         /// <summary>
-        /// Defines the packet contents.
-        /// </summary>
-        public TodRequestCodes Command;
-        /// <summary>
-        /// The number of entries in Address that are used. Max value is 32.
-        /// </summary>
-        public byte AddCount;
-        /// <summary>
-        /// This array defines the low byte of the PortAddress of the Output Gateway nodes that must respond to this packet.
+        /// The low 8 bits of the Port-Address of the Output Gateway DMX Port that generated this packet.
         /// The high nibble is the Sub-Net switch. 
         /// The low nibble corresponds to the Universe.
-        /// This is combined with the 'Net' field above to form the 15 bit address.
         /// </summary>
-        [ArrayLength(FixedSize = 32)]
-        public byte[] Address;
+        public byte Address;
+        /// <summary>
+        /// The RDM data packet excluding the DMX StartCode.
+        /// <para>Variable length</para>
+        /// </summary>
+        [SkipBin2Object]
+        public byte[] RdmPacket;
 
-        public int ProtVer
-        {
-            get => ProtVerLo | ProtVerHi << 8;
-            set
-            {
-                ProtVerLo = (byte)(value & 0xFF);
-                ProtVerHi = (byte)(value >> 8);
-            }
-        }
-
-        public ArtTodRequest() : base(OpCodes.OpTodRequest)
+        public ArtRdm() : base(OpCodes.OpRdm)
         {
 
         }
 
-        public static new ArtTodRequest FromData(ArtNetData data)
+        public static new ArtRdm FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -72,7 +66,9 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtTodRequest packet = reader.ReadObject<ArtTodRequest>();
+            ArtRdm packet = reader.ReadObject<ArtRdm>();
+
+            packet.RdmPacket = reader.ReadBytes((int)(stream.Length - reader.Position));
 
             packet.PacketData = data;
 
@@ -87,6 +83,8 @@ namespace ArtNet.Packets
             writer.Write((short)OpCode);
 
             writer.WriteObject(this);
+
+            writer.WriteEndianBytes(RdmPacket);
             return stream.ToArray();
         }
     }

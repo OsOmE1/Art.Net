@@ -28,5 +28,5 @@ namespace NoisyCowStudios.Bin2Object
     }
 
     [AttributeUsage(AttributeTargets.Field)]
-    public class SkipWhenReadingAttribute : Attribute { }
+    public class SkipBin2ObjectAttribute : Attribute { }
 }

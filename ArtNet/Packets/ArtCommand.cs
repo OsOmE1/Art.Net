@@ -8,13 +8,11 @@ using NoisyCowStudios.Bin2Object;
 namespace ArtNet.Packets
 {
     /// <summary>
-    /// A Controller or monitoring device on the network can reprogram numerous controls of a node remotely.
-    /// This, for example, would allow the lighting console to re-route DMX512 data at remote locations. 
-    /// This is achieved by sending an <see cref="ArtDiagData"/> packet to the Node’s IP address. (The IP address is returned in the <see cref="ArtPoll"/> packet). 
-    /// The node replies with an <see cref="ArtPollReply"/> packet.
+    /// The ArtCommand packet is used to send property set style commands.
+    /// The packet can be unicast or broadcast, the decision being application specific.
     /// </summary>
-    [OpCode(OpCode = OpCodes.OpAddress)]
-    public class ArtDiagData : ArtNetPacket
+    [OpCode(OpCode = OpCodes.OpCommand)]
+    public class ArtCommand : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -27,21 +25,16 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
-        /// Ignore by receiver, set to zero by sender
+        /// The ESTA manufacturer code.
+        /// These codes are used to represent equipment manufacturer.
+        /// They are assigned by ESTA.
+        /// This field can be interpreted as two ASCII bytes representing the manufacturer initials.
         /// </summary>
-        public byte Filler1;
+        public byte EstaManHi;
         /// <summary>
-        /// The priority of this diagnostic data. 
+        /// Hi byte of above
         /// </summary>
-        /// <remarks>
-        /// See <see cref="PriorityCodes"/>
-        /// </remarks>
-        public PriorityCodes Priority;
-        /// <summary>
-        /// Ignore by receiver, set to zero by sender
-        /// </summary>
-        [ArrayLength(FixedSize = 2)]
-        public byte[] Filler2;
+        public byte EstaManLo;
         /// <summary>
         /// The length of the text array below. High Byte
         /// </summary>
@@ -66,12 +59,12 @@ namespace ArtNet.Packets
             }
         }
 
-        public ArtDiagData() : base(OpCodes.OpDiagData)
+        public ArtCommand() : base(OpCodes.OpCommand)
         {
 
         }
 
-        public static new ArtDiagData FromData(ArtNetData data)
+        public static new ArtCommand FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -79,7 +72,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtDiagData packet = reader.ReadObject<ArtDiagData>();
+            ArtCommand packet = reader.ReadObject<ArtCommand>();
 
             packet.PacketData = data;
 

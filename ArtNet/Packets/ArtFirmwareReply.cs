@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
@@ -7,8 +6,11 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpIpProg)]
-    public class ArtIpProg : ArtNetPacket
+    /// <summary>
+    /// This packet is sent by the Node to the Controller in acknowledgement of each OpFirmwareMaster packet.
+    /// </summary>
+    [OpCode(OpCode = OpCodes.OpFirmwareReply)]
+    public class ArtFirmwareReply : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -26,41 +28,23 @@ namespace ArtNet.Packets
         [ArrayLength(FixedSize = 2)]
         public byte[] Filler;
         /// <summary>
-        /// Defines the how this packet is processed. If all bits are clear, this is an enquiry only.
+        /// Defines the packet contents as follows.
+        /// Codes are used for both firmware and UBEA.
         /// </summary>
-        /// <remarks>
-        /// Refer to the ArtNet <see href="https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf#page=38">User Guide</see> on how to use.
-        /// </remarks>
-        public byte Command;
+        public FirmwareReplyCodes Type;
         /// <summary>
-        /// Set to zero. Pads data structure for word alignment
+        /// Controller sets to zero, Node does not test.
         /// </summary>
-        public byte Filler1;
-        /// <summary>
-        /// IP Address to be programmed into Node if enabled by Command Field
-        /// </summary>
-        [ArrayLength(FixedSize = 4)]
-        public byte[] ProgIp;
-        /// <summary>
-        /// Subnet mask to be programmed into Node if enabled by Command Field
-        /// </summary>
-        [ArrayLength(FixedSize = 4)]
-        public byte[] ProgSm;
-        [Obsolete("(Deprecated)")]
-        [SkipBin2Object]
-        public byte[] ProgPort;
-        /// <summary>
-        /// Transmit as zero, receivers don’t test.
-        /// </summary>
-        [ArrayLength(FixedSize = 8)]
+        [ArrayLength(FixedSize = 21)]
         public byte[] Spare;
 
-        public ArtIpProg() : base(OpCodes.OpIpProg)
+
+        public ArtFirmwareReply() : base(OpCodes.OpFirmwareReply)
         {
 
         }
 
-        public static new ArtIpProg FromData(ArtNetData data)
+        public static new ArtFirmwareReply FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -68,7 +52,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtIpProg packet = reader.ReadObject<ArtIpProg>();
+            ArtFirmwareReply packet = reader.ReadObject<ArtFirmwareReply>();
 
             packet.PacketData = data;
 

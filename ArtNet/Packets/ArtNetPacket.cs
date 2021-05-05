@@ -1,15 +1,17 @@
-﻿using ArtNet.IO;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using static ArtNet.Attributes;
+using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using NoisyCowStudios.Bin2Object;
-using System;
-using System.IO;
-using System.Text;
 
 namespace ArtNet.Packets
 {
     public class ArtNetPacket
     {
-        [SkipWhenReading]
+        [SkipBin2Object]
         public ArtNetData PacketData;
         /// <summary>
         /// Array of 8 characters, the final character is a null termination.
@@ -17,14 +19,14 @@ namespace ArtNet.Packets
         /// <value>
         ///  ["A", "r", "t", "-", "N", "e", "t", 0x00]
         /// </value>
-        [SkipWhenReading]
+        [SkipBin2Object]
         public byte[] ID;
         /// <summary>
         /// The OpCode defines the class of data following ArtPoll within this UDP packet. 
         /// Transmitted low byte first. 
         /// <para>See <see cref="OpCodes">OpCodes</see>. Set to OpPoll.</para>
         /// </summary>
-        [SkipWhenReading]
+        [SkipBin2Object]
         public OpCodes OpCode;
 
 
@@ -61,10 +63,36 @@ namespace ArtNet.Packets
         public virtual byte[] ToArray()
         {
             var stream = new MemoryStream();
-            var writer = new BinaryWriter(stream);
+            var writer = new BinaryObjectWriter(stream);
             writer.Write(ID);
             writer.Write((short)OpCode);
+
+            writer.WriteObject(this);
             return stream.ToArray();
+        }
+
+        /// <summary>
+        /// Casts an <see cref="ArtNetPacket"/> to another packet that implements <see cref="ArtNetPacket"/> and has the correct OpCode
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T Cast<T>(bool force = false)
+        {
+            if (!typeof(T).IsSubclassOf(typeof(ArtNetPacket)) && !force) {
+                throw new ArgumentException("Overloaded type is not a subclass of ArtNetPacket");
+            }
+
+            if (!(typeof(T).GetCustomAttribute<OpCodeAttribute>(false) is OpCodeAttribute) && !force)
+            {
+                throw new ArgumentException("Overloaded type does not have the OpCodeAttribute");
+            }
+
+            if(typeof(T).GetCustomAttribute<OpCodeAttribute>(false).OpCode != OpCode && !force)
+            {
+                throw new ArgumentException("Overloaded type's OpCode does not match packet OpCode");
+            }
+
+            return (T)typeof(T).GetMethod("FromData")?.Invoke(null, new object[] { PacketData });
         }
 
         /// <summary>

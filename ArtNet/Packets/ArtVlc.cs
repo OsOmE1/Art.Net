@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
@@ -7,8 +6,14 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
-    [OpCode(OpCode = OpCodes.OpDmx)]
-    public class ArtDmx : ArtNetPacket
+    /// <summary>
+    /// ArtVlc is a specific implementation of the ArtNzs packet which is used for the transfer of VLC (Visible Light Communication) data over Art-Net.
+    /// </summary>
+    /// <remarks>
+    /// The packet’s payload can also be used to transfer VLC over a DMX512 physical layer.
+    /// </remarks>
+    [OpCode(OpCode = OpCodes.OpNzs)]
+    public class ArtVlc : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -21,18 +26,17 @@ namespace ArtNet.Packets
         /// <value> 14 </value>
         public byte ProtVerLo;
         /// <summary>
-        /// The sequence number is used to ensure that ArtDmx packets are used in the correct order. 
-        /// When Art-Net is carried over a medium such as the Internet, it is possible that ArtDmx packets will reach the receiver out of order. 
+        /// The sequence number is used to ensure that ArtNzs packets are used in the correct order.
+        /// When Art-Net is carried over a medium such as the Internet, it is possible that ArtNzs packets will reach the receiver out of order.
         /// This field is incremented in the range 0x01 to 0xff to allow the receiving node to resequence packets.
-        /// The Sequence field is set to 0x00 to disable this feature
+        /// The Sequence field is set to 0x00 to disable this feature.
         /// </summary>
         public byte Sequence;
         /// <summary>
-        /// The physical input port from which DMX512 data was input. 
-        /// This field is for information only.
-        /// Use Universe for data routing.
+        /// The DMX512 start code of this packet is set to 91.
+        /// No other values are allowed.
         /// </summary>
-        public byte Physical;
+        public byte StartCode;
         /// <summary>
         /// The low byte of the 15 bit Port-Address to which this packet is destined.
         /// </summary>
@@ -42,8 +46,10 @@ namespace ArtNet.Packets
         /// </summary>
         public byte Net;
         /// <summary>
-        /// The length of the DMX512 data array. This value should be an even number in the range 2 – 512. 
-        /// It represents the number of DMX512 channels encoded in packet.NB: Products which convert Art-Net to DMX512 may opt to always send 512 channels. 
+        /// The length of the Vlc data array.
+        /// This value should be in the range 1 – 512.
+        /// It represents the number of DMX512 channels encoded in packet.
+        /// High Byte.
         /// </summary>
         public byte LengthHi;
         /// <summary>
@@ -51,11 +57,10 @@ namespace ArtNet.Packets
         /// </summary>
         public byte LengthLo;
         /// <summary>
-        /// A variable length array of DMX512 lighting data.
+        /// A variable length array of VLC data as in the <see href="https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf#page=69">User Guide</see>.
         /// </summary>
-        /// <remarks> Set length fixed to 512 bytes</remarks>
         [ArrayLength(FieldName = "Length")]
-        public byte[] Data;
+        public byte[] Vlc;
 
         public int Length
         {
@@ -67,22 +72,12 @@ namespace ArtNet.Packets
             }
         }
 
-        public int Universe
-        {
-            get => SubUni | Net << 8;
-            set
-            {
-                SubUni = (byte)(value & 0xFF);
-                Net = (byte)(value >> 8);
-            }
-        }
-
-        public ArtDmx() : base(OpCodes.OpDmx)
+        public ArtVlc() : base(OpCodes.OpNzs)
         {
 
         }
 
-        public static new ArtDmx FromData(ArtNetData data)
+        public static new ArtVlc FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -90,7 +85,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtDmx packet = reader.ReadObject<ArtDmx>();
+            ArtVlc packet = reader.ReadObject<ArtVlc>();
 
             packet.PacketData = data;
 
@@ -111,7 +106,6 @@ namespace ArtNet.Packets
         public override string ToString()
         {
             return base.ToString() +
-                $"Universe: {Universe}\n" +
                 $"Data Length: {Length}\n";
         }
     }

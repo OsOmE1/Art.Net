@@ -37,6 +37,6 @@
         /// <summary>
         /// A visualiser.
         /// </summary>
-        StVisual = 0x06,
+        StVisual = 0x06
     }
 }

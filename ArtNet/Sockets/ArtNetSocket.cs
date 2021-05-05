@@ -1,8 +1,8 @@
-﻿using ArtNet.IO;
-using ArtNet.Packets;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using ArtNet.IO;
+using ArtNet.Packets;
 
 namespace ArtNet.Sockets
 {
@@ -90,14 +90,16 @@ namespace ArtNet.Sockets
         }
 
         /// <summary>
-        /// Broadcasts an <see cref="ArtNetPacket"/>
+        /// Broadcasts a <see cref="ArtNetPacket"/>
         /// </summary>
-        /// <param name="packet"></param>
         public void Send(ArtNetPacket packet)
         {
             SendTo(packet.ToArray(), new IPEndPoint(GetBroadcastAddress(), Port));
         }
 
+        /// <summary>
+        /// Sends a <see cref="ArtNetPacket"/> to a recipient
+        /// </summary>
         public void SendToIp(ArtNetPacket packet, IPAddress ip)
         {
             SendTo(packet.ToArray(), new IPEndPoint(ip, Port));

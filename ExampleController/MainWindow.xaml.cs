@@ -1,11 +1,8 @@
-﻿using ArtNet.Packets;
-using ArtNet.Sockets;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading;
+﻿using System.Net;
 using System.Windows;
-using System.Windows.Controls;
+using ArtNet.Packets;
+using ArtNet.Sockets;
+
 
 namespace ExampleController
 {
@@ -58,7 +55,7 @@ namespace ExampleController
                     dmxPacket.Data[j * 4 + 2] = (byte)Color.B;
                     dmxPacket.Data[j * 4 + 3] = (byte)Color.W;
                 }
-                socket.Send(dmxPacket);
+                socket.SendToIp(dmxPacket, IPAddress.Parse("255.255.255.255"));
             }
         }
 
