@@ -26,7 +26,7 @@ namespace ExampleController
             InitializeComponent();
             Color = new RGBW() { R = 0, G = 0, B = 0, W = 0 };
             socket = new ArtNetSocket() { EnableBroadcast = true };
-            socket.Begin(IPAddress.Parse("192.168.178.39"), IPAddress.Parse("255.255.255.0"));
+            socket.Begin(IPAddress.Parse("127.0.0.1"), IPAddress.Parse("255.255.255.0"));
         }
 
 
@@ -55,7 +55,7 @@ namespace ExampleController
                     dmxPacket.Data[j * 4 + 2] = (byte)Color.B;
                     dmxPacket.Data[j * 4 + 3] = (byte)Color.W;
                 }
-                socket.SendToIp(dmxPacket, IPAddress.Parse("255.255.255.255"));
+                socket.Send(dmxPacket);
             }
         }
 

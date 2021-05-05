@@ -18,7 +18,7 @@ namespace Example
             };
 
             Console.WriteLine(artnet.GetBroadcastAddress());
-            artnet.Begin(IPAddress.Parse("192.168.178.39"), IPAddress.Parse("255.255.255.0"));
+            artnet.Begin(IPAddress.Parse("127.0.0.1"), IPAddress.Parse("255.255.255.0"));
             artnet.NewPacket += (object sender, ArtNet.Sockets.NewPacketEventArgs<ArtNetPacket> e) =>
             {
                 Console.WriteLine(e.Packet.ToString());
@@ -31,7 +31,7 @@ namespace Example
                 {
                     var pollReply = new ArtPollReply
                     {
-                        IP = IPAddress.Parse("192.168.178.39").GetAddressBytes(),
+                        IP = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
                         Port = (short)artnet.Port,
                         Mac = NetworkInterface.GetAllNetworkInterfaces()
                             .Where(nic => nic.OperationalStatus == OperationalStatus.Up && nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
@@ -58,7 +58,7 @@ namespace Example
                         NumPortsHi = 0,
                         NumPortsLo = 4,
                         Status2 = 0x08,
-                        BindIp = IPAddress.Parse("192.168.178.39").GetAddressBytes(),
+                        BindIp = IPAddress.Parse("127.0.0.1").GetAddressBytes(),
                         SwIn = new byte[] { 0x01, 0x02, 0x03, 0x04 },
                         SwOut = new byte[] { 0x01, 0x02, 0x03, 0x04 },
                         GoodOutput2 = new byte[] { 0x80, 0x80, 0x80, 0x80 },
@@ -68,7 +68,7 @@ namespace Example
                     };
                     pollReply.Oem = 0xFFFF;
 
-                    artnet.SendToIp(pollReply, IPAddress.Parse("192.168.178.39"));
+                    artnet.Send(pollReply);
                     Console.WriteLine(pollReply.ToString());
                 }
 
