@@ -22,3 +22,4 @@ Coming Soon™
 
 ## Credits
 * [djkaty (Bin2Object)](https://github.com/djkaty)
+* [Artistic Licence (Art-Net protocol)](https://artisticlicence.com/)
