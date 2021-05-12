@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using ArtNet.IO;
 using ArtNet.Packets;
 
@@ -18,8 +20,12 @@ namespace ArtNet.Sockets
 
         public event UnhandledExceptionEventHandler UnhandledException;
         public event EventHandler<NewPacketEventArgs<ArtNetPacket>> NewPacket;
+        private List<CancellationTokenSource> RunningIntervals;
 
-        public ArtNetSocket() : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) { }
+        public ArtNetSocket() : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) 
+        {
+            RunningIntervals = new();
+        }
 
         public void Begin(IPAddress localIp, IPAddress localSubnetMask)
         {
@@ -98,11 +104,55 @@ namespace ArtNet.Sockets
         }
 
         /// <summary>
-        /// Sends a <see cref="ArtNetPacket"/> to a recipient
+        /// Broadcasts a <see cref="ArtNetPacket"/> at a certain interval
+        /// </summary>
+        public CancellationTokenSource SendWithInterval(ArtNetPacket packet, int ms)
+        {
+            CancellationTokenSource cts = new();
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    Send(packet);
+                    Thread.Sleep(ms);
+                }
+            }).Start();
+            RunningIntervals.Add(cts);
+            return cts;
+        }
+
+        /// <summary>
+        /// Unicasts a <see cref="ArtNetPacket"/> to a recipient
         /// </summary>
         public void SendToIp(ArtNetPacket packet, IPAddress ip)
         {
             SendTo(packet.ToArray(), new IPEndPoint(ip, Port));
+        }
+
+        /// <summary>
+        /// Unicasts a <see cref="ArtNetPacket"/> to a recipient at a certain interval
+        /// </summary>
+        public CancellationTokenSource SendToIpWithInterval(ArtNetPacket packet, IPAddress ip, int ms)
+        {
+            CancellationTokenSource cts = new();
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    SendToIp(packet, ip);
+                    Thread.Sleep(ms);
+                }
+            }).Start();
+            RunningIntervals.Add(cts);
+            return cts;
         }
 
         /// <summary>
@@ -128,6 +178,19 @@ namespace ArtNet.Sockets
                 broadcastAddress[i] = (byte)(ipAdressBytes[i] | (subnetMaskBytes[i] ^ 255));
             }
             return new IPAddress(broadcastAddress);
+        }
+
+        /// <summary>
+        /// Closes the socket connection and releases all running intervals
+        /// </summary>
+        public void Close()
+        {
+            open = false;
+            foreach (var cts in RunningIntervals)
+            {
+                cts.Cancel();
+            }
+            base.Close();
         }
     }
 }

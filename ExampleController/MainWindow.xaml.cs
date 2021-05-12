@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Windows;
 using ArtNet.Packets;
 using ArtNet.Sockets;
@@ -26,7 +28,12 @@ namespace ExampleController
             InitializeComponent();
             Color = new RGBW() { R = 0, G = 0, B = 0, W = 0 };
             socket = new ArtNetSocket() { EnableBroadcast = true };
-            socket.Begin(IPAddress.Parse("127.0.0.1"), IPAddress.Parse("255.255.255.0"));
+
+            var localIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList
+                .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
+                .FirstOrDefault();
+
+            socket.Begin(localIP, IPAddress.Parse("255.255.255.0"));
         }
 
 

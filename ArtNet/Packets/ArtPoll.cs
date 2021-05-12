@@ -50,6 +50,15 @@ namespace ArtNet.Packets
         /// </summary>
         public PriorityCodes Priority;
 
+        public int ProtVer
+        {
+            get => ProtVerLo | ProtVerHi << 8;
+            set
+            {
+                ProtVerLo = (byte)(value & 0xFF);
+                ProtVerHi = (byte)(value >> 8);
+            }
+        }
 
         public ArtPoll() : base(OpCodes.OpPoll)
         {
