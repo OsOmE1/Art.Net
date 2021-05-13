@@ -295,7 +295,7 @@ namespace NoisyCowStudios.Bin2Object
                         }
                         else
                         {
-                            var property = type.GetProperty(attr.FieldName) ?? 
+                            var property = type.GetProperty(attr.FieldName) ??
                                 throw new ArgumentException("Array field " + i.Name + " has invalid FieldName in ArrayLength attribute");
                             lengthPrimitive = Convert.ToInt32(property.GetValue(t));
                         }

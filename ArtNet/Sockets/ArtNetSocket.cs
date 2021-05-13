@@ -22,7 +22,7 @@ namespace ArtNet.Sockets
         public event EventHandler<NewPacketEventArgs<ArtNetPacket>> NewPacket;
         private List<CancellationTokenSource> RunningIntervals;
 
-        public ArtNetSocket() : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) 
+        public ArtNetSocket() : base(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
         {
             RunningIntervals = new();
         }
