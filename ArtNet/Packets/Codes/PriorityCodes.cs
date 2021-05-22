@@ -7,7 +7,7 @@
     /// /// <remarks>
     /// See the ArtNet <see href="https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf">User Guide</see> for more.
     /// </remarks>
-    public enum PriorityCodes : short
+    public enum PriorityCodes : byte
     {
         /// <summary>
         /// Low priority message
