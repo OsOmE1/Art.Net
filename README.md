@@ -5,7 +5,7 @@
 This library is entirely implemented according to the [Art-Net User Guide](https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf) From Artistic Licence Holdings Ltd.
 
 ## Examples
-You have a ExampleController and Node which are both located in their respective folders and demonstrates how to use this library
+There is a ExampleController and Node which are both located in their respective folders and demonstrates how to use this library
 
 ## Installation
 1. Download the latest release from the [release page](https://github.com/OsOmE1/Art.Net/releases/)  
