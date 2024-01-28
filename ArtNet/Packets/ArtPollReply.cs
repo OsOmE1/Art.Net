@@ -145,13 +145,9 @@ namespace ArtNet.Packets
         [ArrayLength(FixedSize = 4)]
         public byte[] SwOut;
         /// <summary>
-        /// Set to 00 when video display is showing local data.
-        /// Set to 01 when video is showing ethernet data.
-        /// The field is now deprecated
+        /// The sACN priority value that will be used when any received DMX is converted to sACN.
         /// </summary>
-        [Obsolete("This field is deprecated.")]
-        [SkipBin2Object]
-        public byte SwVideo;
+        public byte AcnPriority;
         /// <summary>
         /// If the Node supports macro key inputs, this byte represents the trigger values. 
         /// The Node is responsible for ‘debouncing’ inputs. 
