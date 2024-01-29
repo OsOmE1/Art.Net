@@ -8,11 +8,13 @@ using NoisyCowStudios.Bin2Object;
 namespace ArtNet.Packets
 {
     /// <summary>
-    /// The ArtCommand packet is used to send property set style commands.
-    /// The packet can be unicast or broadcast, the decision being application specific.
+    /// The ArtDataRequest packet is used to request data such as product URL
+    /// The ArtDataRequest packet is unicast by a Controller to a Node.
+    /// If the Node supports this feature it will respond by unicasting an ArtDataReply.
+    /// In all scenarios, the ArtDataReply is unicast to the IP address of the sender
     /// </summary>
-    [OpCode(OpCode = OpCodes.OpCommand)]
-    public class ArtCommand : ArtNetPacket
+    [OpCode(OpCode = OpCodes.OpDataRequest)]
+    public class ArtDataRequest : ArtNetPacket
     {
         /// <summary>
         /// High byte of the Art-Net protocol revision number.
@@ -36,27 +38,55 @@ namespace ArtNet.Packets
         /// </summary>
         public byte EstaManLo;
         /// <summary>
-        /// The length of the text array below. High Byte
+        /// The high byte of the Oem code.
         /// </summary>
-        public byte LengthHi;
+        public byte OemHi;
         /// <summary>
-        /// Low Byte.
+        /// The low byte of the Oem code.
+        /// The Oem code uniquely identifies the product sending this packet.
         /// </summary>
-        public byte LengthLo;
+        public byte OemLo;
         /// <summary>
-        /// ASCII text array, null terminated.
-        /// Max length is 512 bytes including the null terminator.
+        /// The data being requested. Hi byte. See DataRequestCodes
         /// </summary>
-        [ArrayLength(FieldName = "Length")]
-        public string Data;
+        public byte RequestHi;
+        /// <summary>
+        /// The data being requested. Lo byte.
+        /// </summary>
+        public byte RequestLo;
+        /// <summary>
+        /// Transmit as zero, receivers don’t test.
+        /// </summary>
+        [ArrayLength(FixedSize = 22)]
+        public string Spare;
 
-        public int Length
+        public int EstaMan
         {
-            get => LengthLo | LengthHi << 8;
+            get => EstaManLo | EstaManHi << 8;
             set
             {
-                LengthLo = (byte)(value & 0xFF);
-                LengthHi = (byte)(value >> 8);
+                EstaManLo = (byte)(value & 0xFF);
+                EstaManHi = (byte)(value >> 8);
+            }
+        }
+
+        public int Oem
+        {
+            get => OemLo | OemHi << 8;
+            set
+            {
+                OemLo = (byte)(value & 0xFF);
+                OemHi = (byte)(value >> 8);
+            }
+        }
+
+        public DataRequestCodes Request
+        {
+            get => RequestLo | RequestHi << 8;
+            set
+            {
+                RequestHi = (byte)((ushort)value & 0xFF);
+                RequestLo = (byte)((ushort)value >> 8);
             }
         }
 

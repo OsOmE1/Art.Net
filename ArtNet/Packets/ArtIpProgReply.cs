@@ -45,8 +45,17 @@ namespace ArtNet.Packets
         /// <summary>
         /// Transmit as zero, receivers don’t test.
         /// </summary>
-        [ArrayLength(FixedSize = 7)]
-        public byte[] Spare;
+        public byte Spare2;
+        /// <summary>
+        /// Default Gateway of Node.
+        /// </summary>
+        [ArrayLength(FixedSize = 4)]
+        public byte[] ProgDg;
+        /// <summary>
+        /// Transmit as zero, receivers don’t test.
+        /// </summary>
+        [ArrayLength(FixedSize = 2)]
+        public byte[] Spare78;
 
         public ArtIpProgReply() : base(OpCodes.OpIpProgReply)
         {

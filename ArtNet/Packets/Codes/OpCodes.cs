@@ -33,6 +33,14 @@ namespace ArtNet.Packets.Codes
         /// </summary>
         OpCommand = 0x2400,
         /// <summary>
+        /// Used to request data such as products URLs
+        /// </summary>
+        OpDataRequest = 0x2700,
+        /// <summary>
+        /// Used to reply to ArtDataRequest packets
+        /// </summary>
+        OpDataReply = 0x2800,
+        /// <summary>
         /// This is an ArtDmx data packet. 
         /// It contains zero start code DMX512 information for a single Universe.
         /// </summary>

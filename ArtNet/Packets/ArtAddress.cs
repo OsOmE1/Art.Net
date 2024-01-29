@@ -42,14 +42,14 @@ namespace ArtNet.Packets
         /// </summary>
         public byte BindIndex;
         /// <summary>
-        /// The array represents a null terminated short name for the Node.
+        /// The array represents a null terminated port name for port of this Node.
         /// The Controller uses the ArtAddress packet to program this string. 
         /// Max length is 17 characters plus the null. 
         /// The Node will ignore this value if the string is null. 
         /// <para>This is a fixed length field, although the string it contains can be shorter than the field.</para>
         /// </summary>
         [String(FixedSize = 18)]
-        public string ShortName;
+        public string PortName;
         /// <summary>
         /// The array represents a null terminated long name for the Node.
         /// The Controller uses the ArtAddress packet to program this string. 
@@ -57,7 +57,7 @@ namespace ArtNet.Packets
         /// The Node will ignore this value if the string is null. 
         /// <para>This is a fixed length field, although the string it contains can be shorter than the field.</para>
         /// </summary>
-        [String(FixedSize = 18)]
+        [String(FixedSize = 64)]
         public string LongName;
         /// <summary>
         /// Bits 3-0 of the 15 bit Port-Address for a given input port are encoded into the bottom 4 bits of this field. 

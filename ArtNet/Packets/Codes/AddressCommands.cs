@@ -34,6 +34,14 @@
         /// If an output short is being flagged, forces the test to re-run.
         /// </summary>
         AcResetRxFlags = 0x05,
+        /// <summary>
+        /// Enable analysis and debugging mode.
+        /// </summary>
+        AcAnalysisOn = 0x06,
+        /// <summary>
+        /// Disable analysis and debugging mode
+        /// </summary>
+        AcAnalysisOff = 0x07,
 
         // Fail-over configuration commands: These settings should be retained by the node during power cycling
 
@@ -75,6 +83,38 @@
         /// Set DMX Port 3 to Merge in LTP mode.
         /// </summary>
         AcMergeLtp3 = 0x13,
+        /// <summary>
+        /// Set Port 0 direction to output.
+        /// </summary>
+        AcDirectionTx0 = 0x20,
+        /// <summary>
+        /// Set Port 1 direction to output.
+        /// </summary>
+        AcDirectionTx1 = 0x21,
+        /// <summary>
+        /// Set Port 2 direction to output.
+        /// </summary>
+        AcDirectionTx2 = 0x22,
+        /// <summary>
+        /// Set Port 3 direction to output.
+        /// </summary>
+        AcDirectionTx3 = 0x23,
+        /// <summary>
+        /// Set Port 0 direction to input.
+        /// </summary>
+        AcDirectionRx0 = 0x30,
+        /// <summary>
+        /// Set Port 1 direction to input.
+        /// </summary>
+        AcDirectionRx1 = 0x30,
+        /// <summary>
+        /// Set Port 2 direction to input.
+        /// </summary>
+        AcDirectionRx2 = 0x33,
+        /// <summary>
+        /// Set Port 3 direction to input.
+        /// </summary>
+        AcDirectionRx3 = 0x33,
         /// <summary>
         /// Set DMX Port 0 to Merge in HTP (default) mode.
         /// </summary>
