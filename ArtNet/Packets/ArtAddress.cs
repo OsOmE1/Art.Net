@@ -86,9 +86,11 @@ namespace ArtNet.Packets
         /// </summary>
         public byte SubSwitch;
         /// <summary>
-        /// Reserved.
+        /// Sets the sACN Priority field for sACN generated on all 4 ports encoded into this packet.
+        /// A value of 255 represents no change.
+        /// Values of 0 to 200 inclusive are valid.
         /// </summary>
-        public byte SwVideo;
+        public byte AcnPriority;
         /// <summary>
         /// Node configuration commands:
         /// </summary>
