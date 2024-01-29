@@ -47,7 +47,6 @@ namespace ArtNet.Packets
         [ArrayLength(FixedSize = 4)]
         public byte[] ProgSm;
         [Obsolete("(Deprecated)")]
-        [SkipBin2Object]
         public byte[] ProgPort;
         /// <summary>
         /// Transmit as zero, receivers don’t test.

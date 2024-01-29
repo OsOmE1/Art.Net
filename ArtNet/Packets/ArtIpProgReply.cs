@@ -37,7 +37,6 @@ namespace ArtNet.Packets
         [ArrayLength(FixedSize = 4)]
         public byte[] ProgSm;
         [Obsolete("(Deprecated)")]
-        [SkipBin2Object]
         public byte[] ProgPort;
         /// <remarks>
         /// Refer to the ArtNet <see href="https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf#page=40">User Guide</see> on how to use.
