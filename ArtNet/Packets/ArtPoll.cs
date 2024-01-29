@@ -4,6 +4,7 @@ using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using NoisyCowStudios.Bin2Object;
+using System.Buffers.Binary;
 
 namespace ArtNet.Packets
 {
@@ -105,10 +106,10 @@ namespace ArtNet.Packets
             };
             // Read optional bytes
             // ReadUint16 reads in little endian, convert to big
-            if ((stream.length - reader.Position) >= 2) AddressTop = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
-            if ((stream.length - reader.Position) >= 2) AddressBottom = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
-            if ((stream.length - reader.Position) >= 2) EstaMan = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
-            if ((stream.length - reader.Position) >= 2) Oem = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.AddressTop = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.AddressBottom = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.EstaMan = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.Oem = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
             packet.PacketData = data;
             return packet;
         }

@@ -321,7 +321,7 @@ namespace ArtNet.Packets
                 $"IP: {IP}\n" +
                 $"Port: {Port}\n" +
                 $"Mac: {sb}\n" +
-                $"ShortName: {ShortName}\n" +
+                $"PortName: {PortName}\n" +
                 $"LongName: {LongName}\n" +
                 $"NodeReport {NodeReport}\n" +
                 $"StyleCode: {Enum.GetName(Style)}\n" +

@@ -82,7 +82,7 @@ namespace ArtNet.Packets
 
         public DataRequestCodes Request
         {
-            get => RequestLo | RequestHi << 8;
+            get => (DataRequestCodes)(RequestLo | RequestHi << 8);
             set
             {
                 RequestHi = (byte)((ushort)value & 0xFF);
@@ -90,12 +90,12 @@ namespace ArtNet.Packets
             }
         }
 
-        public ArtCommand() : base(OpCodes.OpCommand)
+        public ArtDataRequest() : base(OpCodes.OpCommand)
         {
 
         }
 
-        public static new ArtCommand FromData(ArtNetData data)
+        public static new ArtDataRequest FromData(ArtNetData data)
         {
             var stream = new MemoryStream(data.Buffer);
             var reader = new BinaryObjectReader(stream)
@@ -103,7 +103,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtCommand packet = reader.ReadObject<ArtCommand>();
+            ArtDataRequest packet = reader.ReadObject<ArtDataRequest>();
 
             packet.PacketData = data;
 

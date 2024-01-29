@@ -17,13 +17,25 @@ namespace ArtNet.Packets
         /// Set to enable DHCP (if set ignore lower bits).
         /// </summary>
         public bool EnableDHCP;
+        /// <summary> 
+        /// Set to program the default gateway address
+        /// </summary>
         public bool ProgramDefaultGatway;
         /// <summary> 
         /// Set to return all three parameters to default
         /// </summary>
         public bool ReturnToDefault;
+        /// <summary> 
+        /// Set to program the IP address
+        /// </summary>
         public bool ProgramIpAddress;
-        public bool ProgramSubnetMask
+        /// <summary> 
+        /// Set to program the subnet mask
+        /// </summary>
+        public bool ProgramSubnetMask;
+        /// <summary> 
+        /// Set to program the artnet port (Deprecated)
+        /// </summary>
         public bool ProgramPort;
     }
 
@@ -68,7 +80,11 @@ namespace ArtNet.Packets
         /// </summary>
         [ArrayLength(FixedSize = 4)]
         public byte[] ProgSm;
+        /// <summary>
+        /// Artnet port to be programmed into Node if enabled by Command Field (Deprecated)
+        /// </summary>
         [Obsolete("(Deprecated)")]
+        [ArrayLength(FixedSize = 2)]
         public byte[] ProgPort;
         /// <summary>
         /// Default Gateway to be programmed into Node if enabled by Command Field
@@ -94,7 +110,7 @@ namespace ArtNet.Packets
                 Position = 10
             };
 
-            ArtIpProg packet = reader.ReadObject<ArtIpProg>()
+            ArtIpProg packet = reader.ReadObject<ArtIpProg>();
             packet.IpProgCommand = new IpProgCommand
             {
                 EnableAnyProgramming = (packet.Command & (1 << 7)) > 0,

@@ -4,6 +4,7 @@ using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using ArtNet.Rdm;
 using NoisyCowStudios.Bin2Object;
+using Art.Net.Packets.Codes;
 
 namespace ArtNet.Packets
 {

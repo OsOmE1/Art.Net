@@ -48,7 +48,7 @@ namespace Example
                         GoodInput = new byte[] { 0x08, 0x08, 0x08, 0x08 },
                         GoodOutput = new byte[] { 0x80, 0x80, 0x80, 0x80 },
                         PortTypes = new byte[] { 0xc0, 0xc0, 0xc0, 0xc0 },
-                        ShortName = "Art.Net\0",
+                        PortName = "Art.Net\0",
                         LongName = "A c# Art-Net 4 Library\0",
                         VersInfoH = 6,
                         VersInfoL = 9,
@@ -60,7 +60,7 @@ namespace Example
                         BindIp = localIP.GetAddressBytes(),
                         SwIn = new byte[] { 0x01, 0x02, 0x03, 0x04 },
                         SwOut = new byte[] { 0x01, 0x02, 0x03, 0x04 },
-                        GoodOutput2 = new byte[] { 0x80, 0x80, 0x80, 0x80 },
+                        GoodOutputB = new byte[] { 0x80, 0x80, 0x80, 0x80 },
 
                         NodeReport = "Up and running\0",
                         Filler = new byte[168]
