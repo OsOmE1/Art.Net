@@ -34,13 +34,15 @@ namespace ArtNet.Packets
         [ArrayLength(FixedSize = 7)]
         public byte[] Spare;
         /// <summary>
+        /// The top 7 bits of the Port-Address of the Output Gateway DMX Port that should action this command.
+        /// </summary>
+        public byte Net;
+        /// <summary>
         /// Defines the packet contents.
         /// </summary>
         public TodControlCodes Command;
         /// <summary>
-        /// The low 8 bits of the Port-Address of the Output Gateway DMX Port that generated this packet.
-        /// The high nibble is the Sub-Net switch. 
-        /// The low nibble corresponds to the Universe.
+        /// The low byte of the 15 bit Port-Address of the DMX Port that should action this command.
         /// </summary>
         public byte Address;
 

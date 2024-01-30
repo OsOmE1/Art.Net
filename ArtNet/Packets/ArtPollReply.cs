@@ -78,13 +78,13 @@ namespace ArtNet.Packets
         /// </summary>
         public byte EstaManHi;
         /// <summary>
-        /// The array represents a null terminated short name for the Node.
+        /// The array represents a null terminated name for each port of the Node.
         /// The Controller uses the ArtAddress packet to program this string.
         /// Max length is 17 characters plus the null. 
         /// This is a fixed length field, although the string it contains can be shorter than the field.
         /// </summary>
         [String(FixedSize = 18)]
-        public string ShortName;
+        public string PortName;
         /// <summary>
         /// The array represents a null terminated long name for the Node.
         /// The Controller uses the ArtAddress packet to program this string. 
@@ -201,16 +201,40 @@ namespace ArtNet.Packets
         /// This array defines output status of the node
         /// </summary>
         [ArrayLength(FixedSize = 4)]
-        public byte[] GoodOutput2;
+        public byte[] GoodOutputB;
         /// <summary>
         /// General Status register containing bit fields.
         /// </summary>
         public byte Status3;
         /// <summary>
-        /// Transmit as zero. For future expansion.
-        /// Size: 21 * byte(8)
+        /// RDMnet and LLRP Default Responder UID
         /// </summary>
-        [ArrayLength(FixedSize = 168)]
+        [ArrayLength(FixedSize = 6)]
+        public byte[] DefaulRespUID;
+        /// <summary>
+        /// Available for user specific data
+        /// </summary>
+        public byte UserHi;
+        /// <summary>
+        /// Available for user specific data
+        /// </summary>
+        public byte UserLo;
+        /// <summary>
+        /// Hi byte of RefreshRate
+        /// </summary>
+        public byte RefreshRateHi;
+        /// <summary>
+        /// Lo Byte of RefreshRate.
+        /// RefreshRate allows the device to specify the maximum refresh rate, expressed in Hz, at which it can process ArtDmx. 
+        /// This is designed to allow refresh rates above DMX512 rates, for gateways that implement other protocols such as SPI.
+        /// A value of 0 to 44 represents the maximum DMX512 rate of 44Hz
+        /// </summary>
+        public byte RefreshRateLo;
+        /// <summary>
+        /// Transmit as zero. For future expansion.
+        /// Size: 11 bytes?
+        /// </summary>
+        [ArrayLength(FixedSize = 11)]
         public byte[] Filler;
 
         public int Oem
@@ -220,6 +244,26 @@ namespace ArtNet.Packets
             {
                 OemLo = (byte)(value & 0xFF);
                 OemHi = (byte)(value >> 8);
+            }
+        }
+
+        public int User
+        {
+            get => UserLo | UserHi << 8;
+            set
+            {
+                UserLo = (byte)(value & 0xFF);
+                UserHi = (byte)(value >> 8);
+            }
+        }
+
+        public int RefreshRate
+        {
+            get => RefreshRateLo | RefreshRateHi << 8;
+            set
+            {
+                RefreshRateLo = (byte)(value & 0xFF);
+                RefreshRateHi = (byte)(value >> 8);
             }
         }
 
@@ -277,7 +321,7 @@ namespace ArtNet.Packets
                 $"IP: {IP}\n" +
                 $"Port: {Port}\n" +
                 $"Mac: {sb}\n" +
-                $"ShortName: {ShortName}\n" +
+                $"PortName: {PortName}\n" +
                 $"LongName: {LongName}\n" +
                 $"NodeReport {NodeReport}\n" +
                 $"StyleCode: {Enum.GetName(Style)}\n" +

@@ -38,10 +38,15 @@ namespace ArtNet.Packets
         /// </remarks>
         public PriorityCodes Priority;
         /// <summary>
+        /// The logical DMX port of the product to which the message relates.
+        /// Set to zero for general messages.
+        /// This field if purely informational and is designed to allow development tools to filter diagnostics.
+        /// </summary>
+        public byte LogicalPort;
+        /// <summary>
         /// Ignore by receiver, set to zero by sender
         /// </summary>
-        [ArrayLength(FixedSize = 2)]
-        public byte[] Filler2;
+        public byte Filler3;
         /// <summary>
         /// The length of the text array below. High Byte
         /// </summary>
@@ -51,9 +56,10 @@ namespace ArtNet.Packets
         /// </summary>
         public byte LengthLo;
         /// <summary>
-        /// ASCII text array, null terminated. Max length is 512 bytes including the null terminator.
+        /// ASCII text array, null terminated.
+        /// Max length is 512 bytes including the null terminator.
         /// </summary>
-        [String(FixedSize = 512)]
+        [ArrayLength(FieldName = "Length")]
         public string Data;
 
         public int Length

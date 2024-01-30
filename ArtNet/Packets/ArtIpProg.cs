@@ -7,6 +7,38 @@ using NoisyCowStudios.Bin2Object;
 
 namespace ArtNet.Packets
 {
+    public struct IpProgCommand
+    {
+        /// <summary> 
+        /// Set to enable any programming
+        /// </summary>
+        public bool EnableAnyProgramming;
+        /// <summary> 
+        /// Set to enable DHCP (if set ignore lower bits).
+        /// </summary>
+        public bool EnableDHCP;
+        /// <summary> 
+        /// Set to program the default gateway address
+        /// </summary>
+        public bool ProgramDefaultGatway;
+        /// <summary> 
+        /// Set to return all three parameters to default
+        /// </summary>
+        public bool ReturnToDefault;
+        /// <summary> 
+        /// Set to program the IP address
+        /// </summary>
+        public bool ProgramIpAddress;
+        /// <summary> 
+        /// Set to program the subnet mask
+        /// </summary>
+        public bool ProgramSubnetMask;
+        /// <summary> 
+        /// Set to program the artnet port (Deprecated)
+        /// </summary>
+        public bool ProgramPort;
+    }
+
     [OpCode(OpCode = OpCodes.OpIpProg)]
     public class ArtIpProg : ArtNetPacket
     {
@@ -28,14 +60,16 @@ namespace ArtNet.Packets
         /// <summary>
         /// Defines the how this packet is processed. If all bits are clear, this is an enquiry only.
         /// </summary>
-        /// <remarks>
-        /// Refer to the ArtNet <see href="https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf#page=38">User Guide</see> on how to use.
-        /// </remarks>
+        [SkipBin2Object]
+        public IpProgCommand IpProgCommand;
+        /// <summary>
+        /// Holds the flags stored in IpProgCommand
+        /// </summary>
         public byte Command;
         /// <summary>
         /// Set to zero. Pads data structure for word alignment
         /// </summary>
-        public byte Filler1;
+        public byte Filler4;
         /// <summary>
         /// IP Address to be programmed into Node if enabled by Command Field
         /// </summary>
@@ -46,12 +80,21 @@ namespace ArtNet.Packets
         /// </summary>
         [ArrayLength(FixedSize = 4)]
         public byte[] ProgSm;
+        /// <summary>
+        /// Artnet port to be programmed into Node if enabled by Command Field (Deprecated)
+        /// </summary>
         [Obsolete("(Deprecated)")]
+        [ArrayLength(FixedSize = 2)]
         public byte[] ProgPort;
+        /// <summary>
+        /// Default Gateway to be programmed into Node if enabled by Command Field
+        /// </summary>
+        [ArrayLength(FixedSize = 4)]
+        public byte[] ProgDg;
         /// <summary>
         /// Transmit as zero, receivers don’t test.
         /// </summary>
-        [ArrayLength(FixedSize = 8)]
+        [ArrayLength(FixedSize = 4)]
         public byte[] Spare;
 
         public ArtIpProg() : base(OpCodes.OpIpProg)
@@ -68,6 +111,16 @@ namespace ArtNet.Packets
             };
 
             ArtIpProg packet = reader.ReadObject<ArtIpProg>();
+            packet.IpProgCommand = new IpProgCommand
+            {
+                EnableAnyProgramming = (packet.Command & (1 << 7)) > 0,
+                EnableDHCP = (packet.Command & (1 << 6)) > 0,
+                ProgramDefaultGatway = (packet.Command & (1 << 4)) > 0,
+                ReturnToDefault = (packet.Command & (1 << 3)) > 0,
+                ProgramIpAddress = (packet.Command & (1 << 2)) > 0,
+                ProgramSubnetMask = (packet.Command & (1 << 1)) > 0,
+                ProgramPort = (packet.Command & (1 << 0)) > 0,
+            };
 
             packet.PacketData = data;
 
@@ -76,6 +129,36 @@ namespace ArtNet.Packets
 
         public override byte[] ToArray()
         {
+            Command = 0;
+            if (IpProgCommand.EnableAnyProgramming)
+            {
+                Command |= (1 << 7);
+            }
+            if (IpProgCommand.EnableDHCP)
+            {
+                Command |= (1 << 6);
+            }
+            if (IpProgCommand.ProgramDefaultGatway)
+            {
+                Command |= (1 << 4);
+            }
+            if (IpProgCommand.ReturnToDefault)
+            {
+                Command |= (1 << 3);
+            }
+            if (IpProgCommand.ProgramIpAddress)
+            {
+                Command |= (1 << 2);
+            }
+            if (IpProgCommand.ProgramSubnetMask)
+            {
+                Command |= (1 << 1);
+            }
+            if (IpProgCommand.ProgramPort)
+            {
+                Command |= (1 << 0);
+            }
+
             var stream = new MemoryStream();
             var writer = new BinaryObjectWriter(stream);
             writer.Write(ID);

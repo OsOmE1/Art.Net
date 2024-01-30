@@ -4,6 +4,7 @@ using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using ArtNet.Rdm;
 using NoisyCowStudios.Bin2Object;
+using Art.Net.Packets.Codes;
 
 namespace ArtNet.Packets
 {
@@ -56,7 +57,7 @@ namespace ArtNet.Packets
         /// <value>
         /// Either TodFull(0x00) or TodNak(0xFF, not available)
         /// </value>
-        public byte CommandResponse;
+        public TodDataCodes CommandResponse;
         /// <summary>
         /// The low 8 bits of the Port-Address of the Output Gateway DMX Port that generated this packet.
         /// The high nibble is the Sub-Net switch. 

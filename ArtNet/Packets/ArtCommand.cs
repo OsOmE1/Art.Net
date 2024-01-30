@@ -44,9 +44,10 @@ namespace ArtNet.Packets
         /// </summary>
         public byte LengthLo;
         /// <summary>
-        /// ASCII text array, null terminated. Max length is 512 bytes including the null terminator.
+        /// ASCII text array, null terminated.
+        /// Max length is 512 bytes including the null terminator.
         /// </summary>
-        [String(FixedSize = 512)]
+        [ArrayLength(FieldName = "Length")]
         public string Data;
 
         public int Length

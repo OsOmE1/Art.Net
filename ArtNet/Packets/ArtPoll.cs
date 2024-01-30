@@ -4,6 +4,7 @@ using static ArtNet.Attributes;
 using ArtNet.IO;
 using ArtNet.Packets.Codes;
 using NoisyCowStudios.Bin2Object;
+using System.Buffers.Binary;
 
 namespace ArtNet.Packets
 {
@@ -49,6 +50,28 @@ namespace ArtNet.Packets
         /// The lowest priority of diagnostics message that should be sent. See <see cref="PriorityCodes"/>.
         /// </summary>
         public PriorityCodes Priority;
+        /// <summary>
+        /// Top of the range of Port-Addresses to be tested if Targeted Mode is active.
+        /// </summary>
+        /// <remark>This is optional, consider zero if packet is too short</remarK>
+        [SkipBin2Object]
+        public int AddressTop;
+        /// <summary>
+        /// Bottom of the range of Port-Addresses to be tested if Targeted Mode is active.
+        /// </summary>
+        /// <remark>This is optional, consider zero if packet is too short</remarK>
+        [SkipBin2Object]
+        public int AddressBottom;
+        /// <summary>
+        /// The ESTA Manufacturer Code is assigned by ESTA and uniquely identifies the manufacturer that generated this packet.
+        /// </summary>
+        [SkipBin2Object]
+        public int EstaMan;
+        /// <summary>
+        /// The Oem code uniquely identifies the product sending this packet.
+        /// </summary>
+        [SkipBin2Object]
+        public int Oem;
 
         public int ProtVer
         {
@@ -81,6 +104,12 @@ namespace ArtNet.Packets
                 SendDiagnostics = (packet.Flags & (1 << 2)) > 0,
                 ReplyOnChange = (packet.Flags & (1 << 1)) > 0,
             };
+            // Read optional bytes
+            // ReadUint16 reads in little endian, convert to big
+            if ((stream.Length - reader.Position) >= 2) packet.AddressTop = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.AddressBottom = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.EstaMan = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
+            if ((stream.Length - reader.Position) >= 2) packet.Oem = BinaryPrimitives.ReverseEndianness(reader.ReadUInt16());
             packet.PacketData = data;
             return packet;
         }
@@ -112,6 +141,16 @@ namespace ArtNet.Packets
             writer.Write((short)OpCode);
 
             writer.WriteObject(this);
+            // Write optional extra bytes
+            writer.Write((byte)((AddressTop >> 8) & 0xff));
+            writer.Write((byte)(AddressTop & 0xff));
+            writer.Write((byte)((AddressBottom >> 8) & 0xff));
+            writer.Write((byte)(AddressBottom & 0xff));
+            writer.Write((byte)((EstaMan >> 8) & 0xff));
+            writer.Write((byte)(EstaMan & 0xff));
+            writer.Write((byte)((Oem >> 8) & 0xff));
+            writer.Write((byte)(Oem & 0xff));
+
             return stream.ToArray();
         }
 
