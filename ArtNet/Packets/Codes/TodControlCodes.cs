@@ -1,14 +1,15 @@
-﻿namespace ArtNet.Packets.Codes
+﻿// Copyright (c) 2024 OsOmE1 - https://github.com/OsOmE1 - https://github.com/OsOmE1/Art.Net
+
+namespace ArtNet.Packets.Codes;
+
+public enum TodControlCodes : byte
 {
-    public enum TodControlCodes : byte
-    {
-        /// <summary>
-        /// No action.
-        /// </summary>
-        AtcNone = 0x00,
-        /// <summary>
-        /// The node flushes its TOD and instigates full discovery.
-        /// </summary>
-        AtcFlush = 0x01
-    }
+    /// <summary>
+    /// No action.
+    /// </summary>
+    AtcNone = 0x00,
+    /// <summary>
+    /// The node flushes its TOD and instigates full discovery.
+    /// </summary>
+    AtcFlush = 0x01
 }

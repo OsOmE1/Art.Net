@@ -1,14 +1,15 @@
-﻿using System;
+﻿// Copyright (c) 2024 OsOmE1 - https://github.com/OsOmE1 - https://github.com/OsOmE1/Art.Net
+
+using System;
 using ArtNet.Packets.Codes;
 
-namespace ArtNet
+namespace ArtNet;
+
+internal class Attributes
 {
-    class Attributes
+    [AttributeUsage(AttributeTargets.Class)]
+    public class OpCodeAttribute : Attribute
     {
-        [AttributeUsage(AttributeTargets.Class)]
-        public class OpCodeAttribute : Attribute
-        {
-            public OpCodes OpCode { get; set; } = OpCodes.OpNone;
-        }
+        public OpCodes OpCode { get; set; } = OpCodes.OpNone;
     }
 }
