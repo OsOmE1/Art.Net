@@ -1,19 +1,12 @@
-﻿using System;
+﻿// Copyright (c) 2024 OsOmE1 - https://github.com/OsOmE1 - https://github.com/OsOmE1/Art.Net
+
+using System;
 using System.Net;
 
-namespace ArtNet.Sockets
+namespace ArtNet.Sockets;
+
+public class NewPacketEventArgs<TPacketType>(IPEndPoint source, TPacketType packet) : EventArgs
 {
-    public class NewPacketEventArgs<TPacketType> : EventArgs
-    {
-        public NewPacketEventArgs(IPEndPoint source, TPacketType packet)
-        {
-            Source = source;
-            Packet = packet;
-        }
-
-        public IPEndPoint Source;
-
-        public TPacketType Packet;
-
-    }
+    public IPEndPoint Source = source;
+    public TPacketType Packet = packet;
 }
